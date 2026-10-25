@@ -68,6 +68,17 @@
   padding-bottom: 2px;
 }
 
+.nav-link-locked {
+  opacity: 0.82;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-link-locked:hover {
+  opacity: 1;
+  color: #f6ad55;
+}
+
 .navbar-actions {
   display: flex;
   align-items: center;

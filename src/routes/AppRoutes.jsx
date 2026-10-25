@@ -1,5 +1,7 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
+import { ProtectedRoute } from './ProtectedRoute';
 import { Landing } from '../pages/Landing/Landing';
 import { HowItWorks } from '../pages/HowItWorks/HowItWorks';
 import { SignIn } from '../pages/Auth/SignIn';
@@ -17,25 +19,125 @@ import { Settings } from '../pages/Settings/Settings';
 import { NotFound } from '../pages/NotFound/NotFound';
 
 export const AppRoutes = () => {
+  const { currentUser } = useContext(AppContext);
+
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
+      {/* Root Route: If logged in, shows Landing; if guest, redirects to open /how-it-works page */}
+      <Route
+        path="/"
+        element={
+          currentUser ? <Landing /> : <Navigate to="/how-it-works" replace />
+        }
+      />
+
+      {/* Public Pages: Open to everyone without signing in */}
       <Route path="/how-it-works" element={<HowItWorks />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/sign-up" element={<SignUp />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/explore" element={<ExploreProjects />} />
-      <Route path="/project/:id" element={<ProjectDetails />} />
-      <Route path="/find-teammates" element={<FindTeammates />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/profile/:id" element={<Profile />} />
-      <Route path="/create-project" element={<CreateProject />} />
-      <Route path="/my-projects" element={<MyProjects />} />
-      <Route path="/projects/:id" element={<Workspace />} />
-      <Route path="/projects/:id/*" element={<Workspace />} />
-      <Route path="/notifications" element={<Notifications />} />
-      <Route path="/settings" element={<Settings />} />
+
+      {/* Protected Pages: Locked until user signs in or creates an account */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/explore"
+        element={
+          <ProtectedRoute>
+            <ExploreProjects />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/project/:id"
+        element={
+          <ProtectedRoute>
+            <ProjectDetails />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/find-teammates"
+        element={
+          <ProtectedRoute>
+            <FindTeammates />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile/:id"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create-project"
+        element={
+          <ProtectedRoute>
+            <CreateProject />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-projects"
+        element={
+          <ProtectedRoute>
+            <MyProjects />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/projects/:id"
+        element={
+          <ProtectedRoute>
+            <Workspace />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/projects/:id/*"
+        element={
+          <ProtectedRoute>
+            <Workspace />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute>
+            <Notifications />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* 404 Route */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
+
+export default AppRoutes;

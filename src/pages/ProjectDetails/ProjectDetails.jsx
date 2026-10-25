@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Code, Calendar, Target, UserPlus, CheckCircle, FolderKanban } from 'lucide-react';
+import { ArrowLeft, Users, Code, Calendar, Target, UserPlus, CheckCircle, FolderKanban, Bookmark } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleBookmark, selectSavedProjectIds } from '../../store/slices/bookmarksSlice';
 import { AppContext } from '../../context/AppContext';
 import { Button } from '../../components/Button/Button';
 import { ProgressBar } from '../../components/ProgressBar/ProgressBar';
@@ -10,6 +12,10 @@ import './ProjectDetails.css';
 export const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const savedProjectIds = useSelector(selectSavedProjectIds);
+  const isBookmarked = savedProjectIds.includes(id);
+
   const { projects, currentUser, joinProjectRequest } = useContext(AppContext);
   const [showJoinModal, setShowJoinModal] = useState(false);
 
@@ -81,6 +87,15 @@ export const ProjectDetails = () => {
         </div>
 
         <div className="details-header-actions">
+          <Button
+            variant={isBookmarked ? "primary" : "outline"}
+            size="lg"
+            icon={Bookmark}
+            onClick={() => dispatch(toggleBookmark(project.id))}
+          >
+            {isBookmarked ? "Saved (Redux)" : "Save Project (Redux)"}
+          </Button>
+
           {isMember ? (
             <Link to={`/projects/${project.id}`}>
               <Button variant="copper" size="lg" icon={FolderKanban}>
@@ -163,7 +178,7 @@ export const ProjectDetails = () => {
               {members.map((m, i) => (
                 <div key={i} className="member-row">
                   <img
-                    src={m.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=MananshBoy&backgroundColor=b6e3f4"}
+                    src={m.avatar || "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80"}
                     alt={m.name}
                     className="member-row-avatar"
                   />

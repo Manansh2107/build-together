@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { LogIn, Eye, EyeOff, Sparkles, Github, Globe, Key, X, CheckCircle2, Lock } from 'lucide-react';
 import { AppContext } from '../../context/AppContext';
 import { Input } from '../../components/Input/Input';
@@ -7,8 +7,16 @@ import { Button } from '../../components/Button/Button';
 import './Auth.css';
 
 export const SignIn = () => {
-  const { loginUser, loginWithProvider, resetPassword } = useContext(AppContext);
+  const { currentUser, loginUser, loginWithProvider, resetPassword } = useContext(AppContext);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  // If already logged in, redirect to dashboard
+  if (currentUser) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const from = location.state?.from?.pathname || '/dashboard';
 
   const [email, setEmail] = useState('manansh.goyal@university.edu');
   const [password, setPassword] = useState('password123');
@@ -47,7 +55,7 @@ export const SignIn = () => {
       const res = loginUser(email, password);
       setIsLoading(false);
       if (res.success) {
-        navigate('/dashboard');
+        navigate(from, { replace: true });
       } else {
         setError(res.message || 'Invalid email or password.');
       }
@@ -59,7 +67,7 @@ export const SignIn = () => {
     setTimeout(() => {
       loginWithProvider(provider);
       setIsLoading(false);
-      navigate('/dashboard');
+      navigate(from, { replace: true });
     }, 300);
   };
 
@@ -69,7 +77,7 @@ export const SignIn = () => {
     setError('');
     const res = loginUser(demoEmail, 'password123');
     if (res.success) {
-      navigate('/dashboard');
+      navigate(from, { replace: true });
     }
   };
 
@@ -115,6 +123,13 @@ export const SignIn = () => {
           <h1 className="auth-title">Welcome Back</h1>
           <p className="auth-subtitle">Sign in with your university account to manage student projects.</p>
         </div>
+
+        {location.state?.message && !error && (
+          <div className="alert alert-warning auth-alert" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.25rem', backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', padding: '0.75rem 1rem', borderRadius: '8px' }}>
+            <Lock size={18} style={{ flexShrink: 0 }} />
+            <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>{location.state.message}</span>
+          </div>
+        )}
 
         {error && <div className="alert alert-error auth-alert">{error}</div>}
 
@@ -193,13 +208,13 @@ export const SignIn = () => {
           </span>
           <div className="demo-btns">
             <button type="button" onClick={() => handleDemoLogin('manansh.goyal@university.edu')} className="demo-chip">
-              Manansh (Lead Dev)
+              Manansh Goyal (Lead Dev)
             </button>
-            <button type="button" onClick={() => handleDemoLogin('himanshu@university.edu')} className="demo-chip">
-              Himanshu (Backend)
+            <button type="button" onClick={() => handleDemoLogin('himanshu.sharma@university.edu')} className="demo-chip">
+              Himanshu Sharma (Backend)
             </button>
-            <button type="button" onClick={() => handleDemoLogin('shreyansh@university.edu')} className="demo-chip">
-              Shreyansh (UI/UX)
+            <button type="button" onClick={() => handleDemoLogin('shreyansh.verma@university.edu')} className="demo-chip">
+              Shreyansh Verma (UI/UX)
             </button>
           </div>
         </div>

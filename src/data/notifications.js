@@ -2,33 +2,35 @@ export const initialNotifications = [
   {
     id: "notif-1",
     title: "New Team Invitation",
-    message: "Himanshu invited you to join the 'Campus Navigator' project team as UI Component Dev.",
-    timestamp: "10 mins ago",
+    message: "Himanshu Sharma invited you to join 'CampusPulse — Real-Time IoT Room Finder' as Interactive Map UI Dev.",
+    timestamp: "12 mins ago",
     read: false,
     type: "invite"
   },
   {
     id: "notif-2",
-    title: "Task Completed",
-    message: "Shreyansh marked 'Create project wireframes' as completed in AI Study Assistant.",
-    timestamp: "2 hours ago",
+    title: "Task Milestone Completed",
+    message: "Shreyansh Verma completed 'Create interactive Figma wireframes' in UniStudy AI.",
+    timestamp: "1 hour ago",
     read: false,
     type: "task"
   },
   {
     id: "notif-3",
-    title: "Project Goal Updated",
-    message: "Your project 'AI Study Assistant' reached 75% overall completion!",
+    title: "Project Progress Milestone",
+    message: "Your project 'UniStudy AI' reached 75% overall completion after latest review!",
     timestamp: "1 day ago",
     read: true,
     type: "project"
   },
   {
     id: "notif-4",
-    title: "Welcome to BuildTogether",
-    message: "Explore student projects, showcase your skills, and connect with potential teammates.",
-    timestamp: "3 days ago",
+    title: "Campus Hackathon Notice",
+    message: "DevClash algorithmic 1v1 challenges will open for campus-wide testing this Friday.",
+    timestamp: "2 days ago",
     read: true,
     type: "system"
   }
 ];
+
+export default initialNotifications;

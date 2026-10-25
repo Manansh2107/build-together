@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Users, UserPlus, CheckSquare, TrendingUp, ArrowRight } from 'lucide-react';
+import { Search, Users, UserPlus, CheckSquare, TrendingUp, ArrowRight, LogIn, UserCheck } from 'lucide-react';
+import { AppContext } from '../../context/AppContext';
 import { Button } from '../../components/Button/Button';
 import './HowItWorks.css';
 
 export const HowItWorks = () => {
+  const { currentUser } = useContext(AppContext);
   const steps = [
     {
       number: '1',
@@ -110,16 +112,33 @@ export const HowItWorks = () => {
         <h3>Ready to experience the workflow?</h3>
         <p>Browse existing student projects or publish your own project idea right now.</p>
         <div className="how-cta-btns">
-          <Link to="/explore">
-            <Button variant="copper" icon={ArrowRight}>
-              Explore Projects
-            </Button>
-          </Link>
-          <Link to="/create-project">
-            <Button variant="outline">
-              Create a Project
-            </Button>
-          </Link>
+          {currentUser ? (
+            <>
+              <Link to="/explore">
+                <Button variant="copper" icon={ArrowRight}>
+                  Explore Projects
+                </Button>
+              </Link>
+              <Link to="/create-project">
+                <Button variant="outline">
+                  Create a Project
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/sign-in">
+                <Button variant="copper" icon={LogIn}>
+                  Sign In to Access All Projects
+                </Button>
+              </Link>
+              <Link to="/sign-up">
+                <Button variant="outline" icon={UserCheck}>
+                  Create Free Student Account
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </div>

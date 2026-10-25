@@ -73,7 +73,7 @@ export const Profile = () => {
         <div className="profile-header-content">
           <div className="profile-avatar-wrap">
             <img
-              src={targetUser.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=MananshBoy&backgroundColor=b6e3f4"}
+              src={targetUser.avatar || "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80"}
               alt={targetUser.name}
               className="profile-avatar"
             />

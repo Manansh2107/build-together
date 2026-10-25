@@ -21,7 +21,7 @@ export const UserCard = ({ user, onInvite = null }) => {
     <div className="card user-card">
       <div className="user-card-header">
         <img
-          src={avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=MananshBoy&backgroundColor=b6e3f4"}
+          src={avatar || "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80"}
           alt={name}
           className="user-card-avatar"
         />

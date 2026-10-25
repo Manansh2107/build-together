@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Layers, Bell, User, LogOut, Menu, X, PlusCircle } from 'lucide-react';
+import { Layers, Bell, User, LogOut, Menu, X, PlusCircle, Bookmark, Lock } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { selectSavedBookmarksCount } from '../../store/slices/bookmarksSlice';
 import { AppContext } from '../../context/AppContext';
 import { Button } from '../Button/Button';
 import './Navbar.css';
@@ -10,11 +12,12 @@ export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
+  const savedBookmarksCount = useSelector(selectSavedBookmarksCount);
   const unreadCount = notifications ? notifications.filter(n => !n.read).length : 0;
 
   const handleLogout = () => {
     logoutUser();
-    navigate('/');
+    navigate('/how-it-works');
     setMobileMenuOpen(false);
   };
 
@@ -22,7 +25,7 @@ export const Navbar = () => {
     <header className="navbar">
       <div className="container navbar-container">
         {/* Brand Logo */}
-        <Link to="/" className="navbar-brand" onClick={() => setMobileMenuOpen(false)}>
+        <Link to={currentUser ? "/" : "/how-it-works"} className="navbar-brand" onClick={() => setMobileMenuOpen(false)}>
           <span className="brand-text">BUILD <strong>TOGETHER</strong></span>
         </Link>
 
@@ -31,19 +34,30 @@ export const Navbar = () => {
           <NavLink to="/how-it-works" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
             How It Works
           </NavLink>
-          <NavLink to="/explore" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-            Explore Projects
-          </NavLink>
-          <NavLink to="/find-teammates" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-            Find Teammates
-          </NavLink>
-          {currentUser && (
+          {currentUser ? (
             <>
+              <NavLink to="/explore" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                Explore Projects
+              </NavLink>
+              <NavLink to="/find-teammates" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                Find Teammates
+              </NavLink>
               <NavLink to="/my-projects" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
                 My Projects
               </NavLink>
               <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
                 Dashboard
+              </NavLink>
+            </>
+          ) : (
+            <>
+              <NavLink to="/explore" className="nav-link nav-link-locked" title="Sign In Required to Explore Projects">
+                <Lock size={13} style={{ marginRight: '4px', verticalAlign: '-1px' }} />
+                Explore Projects
+              </NavLink>
+              <NavLink to="/find-teammates" className="nav-link nav-link-locked" title="Sign In Required to Find Teammates">
+                <Lock size={13} style={{ marginRight: '4px', verticalAlign: '-1px' }} />
+                Find Teammates
               </NavLink>
             </>
           )}
@@ -59,6 +73,11 @@ export const Navbar = () => {
                 </Button>
               </Link>
 
+              <Link to="/my-projects?tab=saved" className="notif-btn" title="Saved Projects (Redux Toolkit)">
+                <Bookmark size={20} />
+                {savedBookmarksCount > 0 && <span className="notif-badge">{savedBookmarksCount}</span>}
+              </Link>
+
               <Link to="/notifications" className="notif-btn" title="Notifications">
                 <Bell size={20} />
                 {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
@@ -67,7 +86,7 @@ export const Navbar = () => {
               <div className="user-profile-menu">
                 <Link to="/profile">
                   <img
-                    src={currentUser.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=MananshBoy&backgroundColor=b6e3f4"}
+                    src={currentUser.avatar || "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80"}
                     alt={currentUser.name}
                     className="nav-avatar"
                   />
@@ -109,11 +128,12 @@ export const Navbar = () => {
         <div className="mobile-drawer mobile-only">
           <nav className="mobile-nav">
             <NavLink to="/how-it-works" onClick={() => setMobileMenuOpen(false)}>How It Works</NavLink>
-            <NavLink to="/explore" onClick={() => setMobileMenuOpen(false)}>Explore Projects</NavLink>
-            <NavLink to="/find-teammates" onClick={() => setMobileMenuOpen(false)}>Find Teammates</NavLink>
             {currentUser ? (
               <>
+                <NavLink to="/explore" onClick={() => setMobileMenuOpen(false)}>Explore Projects</NavLink>
+                <NavLink to="/find-teammates" onClick={() => setMobileMenuOpen(false)}>Find Teammates</NavLink>
                 <NavLink to="/my-projects" onClick={() => setMobileMenuOpen(false)}>My Projects</NavLink>
+                <NavLink to="/my-projects?tab=saved" onClick={() => setMobileMenuOpen(false)}>Saved Projects ({savedBookmarksCount})</NavLink>
                 <NavLink to="/dashboard" onClick={() => setMobileMenuOpen(false)}>Dashboard</NavLink>
                 <NavLink to="/create-project" onClick={() => setMobileMenuOpen(false)}>+ Create Project</NavLink>
                 <NavLink to="/profile" onClick={() => setMobileMenuOpen(false)}>My Profile</NavLink>
@@ -124,14 +144,22 @@ export const Navbar = () => {
                 </button>
               </>
             ) : (
-              <div className="mobile-auth-btns">
-                <Link to="/sign-in" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="outline" fullWidth>Sign In</Button>
-                </Link>
-                <Link to="/sign-up" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="copper" fullWidth>Start Building</Button>
-                </Link>
-              </div>
+              <>
+                <NavLink to="/explore" onClick={() => setMobileMenuOpen(false)}>
+                  🔒 Explore Projects (Sign In Required)
+                </NavLink>
+                <NavLink to="/find-teammates" onClick={() => setMobileMenuOpen(false)}>
+                  🔒 Find Teammates (Sign In Required)
+                </NavLink>
+                <div className="mobile-auth-btns">
+                  <Link to="/sign-in" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="outline" fullWidth>Sign In</Button>
+                  </Link>
+                  <Link to="/sign-up" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="copper" fullWidth>Start Building</Button>
+                  </Link>
+                </div>
+              </>
             )}
           </nav>
         </div>
@@ -139,3 +167,5 @@ export const Navbar = () => {
     </header>
   );
 };
+
+export default Navbar;

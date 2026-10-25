@@ -240,7 +240,7 @@ export const Workspace = () => {
                 {project.members.map((member, i) => (
                   <div key={i} className="card team-member-card">
                     <img
-                      src={member.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=MananshBoy&backgroundColor=b6e3f4"}
+                      src={member.avatar || "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80"}
                       alt={member.name}
                       className="team-avatar"
                     />

@@ -1,11 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Code, ArrowRight } from 'lucide-react';
+import { Users, Code, ArrowRight, Bookmark } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleBookmark, selectSavedProjectIds } from '../../store/slices/bookmarksSlice';
 import { ProgressBar } from '../ProgressBar/ProgressBar';
 import { Button } from '../Button/Button';
 import './ProjectCard.css';
 
 export const ProjectCard = ({ project }) => {
+  const dispatch = useDispatch();
+  const savedProjectIds = useSelector(selectSavedProjectIds);
+  const isBookmarked = savedProjectIds.includes(project.id);
+
   const {
     id,
     title,
@@ -21,11 +27,28 @@ export const ProjectCard = ({ project }) => {
 
   const statusClass = status === 'Open' ? 'badge-open' : status === 'In Progress' ? 'badge-in-progress' : 'badge-completed';
 
+  const handleBookmarkClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dispatch(toggleBookmark(id));
+  };
+
   return (
     <div className="card project-card">
       <div className="project-card-header">
         <span className="badge badge-evergreen">{category}</span>
-        <span className={`badge ${statusClass}`}>{status}</span>
+        <div className="header-badges-group">
+          <span className={`badge ${statusClass}`}>{status}</span>
+          <button
+            type="button"
+            className={`card-bookmark-btn ${isBookmarked ? 'active' : ''}`}
+            onClick={handleBookmarkClick}
+            title={isBookmarked ? 'Remove from Saved (Redux)' : 'Save Project (Redux)'}
+            aria-label={isBookmarked ? 'Remove from Saved' : 'Save Project'}
+          >
+            <Bookmark size={16} fill={isBookmarked ? 'currentColor' : 'none'} />
+          </button>
+        </div>
       </div>
 
       <h3 className="project-card-title">{title}</h3>
@@ -65,7 +88,7 @@ export const ProjectCard = ({ project }) => {
           {members.slice(0, 3).map((m, i) => (
             <img
               key={i}
-              src={m.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=MananshBoy&backgroundColor=b6e3f4"}
+              src={m.avatar || "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80"}
               alt={m.name}
               title={`${m.name} (${m.role})`}
               className="member-avatar"

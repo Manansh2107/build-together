@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { UserPlus, ArrowRight, ArrowLeft, Check, Eye, EyeOff, Globe, Github } from 'lucide-react';
 import { AppContext } from '../../context/AppContext';
 import { Input } from '../../components/Input/Input';
@@ -7,8 +7,16 @@ import { Button } from '../../components/Button/Button';
 import './Auth.css';
 
 export const SignUp = () => {
-  const { signupUser, loginWithProvider, users } = useContext(AppContext);
+  const { currentUser, signupUser, loginWithProvider, users } = useContext(AppContext);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  // If already logged in, redirect to dashboard
+  if (currentUser) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const from = location.state?.from?.pathname || '/dashboard';
 
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
@@ -99,7 +107,7 @@ export const SignUp = () => {
 
     const res = signupUser(payload);
     if (res.success) {
-      navigate('/dashboard');
+      navigate(from, { replace: true });
     } else {
       setError(res.message || 'Error creating account.');
       setStep(1);
@@ -108,7 +116,7 @@ export const SignUp = () => {
 
   const handleProviderSignUp = (provider) => {
     loginWithProvider(provider);
-    navigate('/dashboard');
+    navigate(from, { replace: true });
   };
 
   return (

@@ -1,14 +1,28 @@
-import React, { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { PlusCircle, FolderKanban, FolderCheck, Users, Sparkles } from 'lucide-react';
+import React, { useState, useContext, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { PlusCircle, FolderKanban, FolderCheck, Users, Sparkles, Bookmark } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { selectSavedProjectIds } from '../../store/slices/bookmarksSlice';
 import { AppContext } from '../../context/AppContext';
 import { Button } from '../../components/Button/Button';
 import { ProjectCard } from '../../components/ProjectCard/ProjectCard';
 import './MyProjects.css';
 
 export const MyProjects = () => {
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') || 'all';
   const { currentUser, projects } = useContext(AppContext);
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  const savedProjectIds = useSelector(selectSavedProjectIds);
+  const savedProjects = projects.filter(p => savedProjectIds.includes(p.id));
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
   const myCreated = projects.filter(p => p.ownerId === currentUser?.id);
   const myJoined = projects.filter(p =>
@@ -24,6 +38,7 @@ export const MyProjects = () => {
       case 'created': return myCreated;
       case 'joined': return myJoined;
       case 'completed': return myCompleted;
+      case 'saved': return savedProjects;
       default: return myAll;
     }
   };
@@ -36,7 +51,7 @@ export const MyProjects = () => {
         <div>
           <span className="section-subtitle">PROJECT DASHBOARD</span>
           <h1 className="page-title">My Projects</h1>
-          <p className="page-subtitle">Manage projects you created, teams you joined, and track progress.</p>
+          <p className="page-subtitle">Manage projects you created, teams you joined, and saved bookmarks (Redux Toolkit).</p>
         </div>
 
         <Link to="/create-project">
@@ -54,6 +69,13 @@ export const MyProjects = () => {
           onClick={() => setActiveTab('all')}
         >
           All Projects ({myAll.length})
+        </button>
+        <button
+          type="button"
+          className={`tab-btn ${activeTab === 'saved' ? 'active' : ''}`}
+          onClick={() => setActiveTab('saved')}
+        >
+          Saved / Bookmarked ({savedProjects.length})
         </button>
         <button
           type="button"
@@ -94,10 +116,12 @@ export const MyProjects = () => {
               ? "You haven't created any student projects yet."
               : activeTab === 'joined'
               ? "You haven't joined any classmate projects yet."
+              : activeTab === 'saved'
+              ? "You haven't saved any projects yet. Click the bookmark icon on any project card to save it using Redux Toolkit!"
               : "No projects match your current tab selection."}
           </p>
-          <Link to="/create-project">
-            <Button variant="copper">Create Your First Project</Button>
+          <Link to={activeTab === 'saved' ? "/explore" : "/create-project"}>
+            <Button variant="copper">{activeTab === 'saved' ? "Explore Projects to Bookmark" : "Create Your First Project"}</Button>
           </Link>
         </div>
       )}

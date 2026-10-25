@@ -6,48 +6,86 @@ import { initialNotifications } from '../data/notifications';
 
 export const AppContext = createContext();
 
-const getAnimalAvatar = (userId) => {
-  switch (userId) {
-    case 'user-1': return 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80';
-    case 'user-2': return 'https://api.dicebear.com/7.x/open-peeps/svg?seed=HimanshuBoy&backgroundColor=ffd5dc';
-    case 'user-3': return 'https://api.dicebear.com/7.x/open-peeps/svg?seed=ShreyanshBoy&backgroundColor=c0aede';
-    case 'user-4': return 'https://api.dicebear.com/7.x/open-peeps/svg?seed=PanjetaBoy&backgroundColor=d1d4f9';
-    case 'user-5': return 'https://api.dicebear.com/7.x/open-peeps/svg?seed=ManuBoy&backgroundColor=ffdfbf';
-    default: return 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80';
-  }
+const REAL_USER_PROFILES = {
+  'user-1': {
+    name: 'Manansh Goyal',
+    email: 'manansh.goyal@university.edu',
+    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80',
+  },
+  'user-2': {
+    name: 'Himanshu Sharma',
+    email: 'himanshu.sharma@university.edu',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+  },
+  'user-3': {
+    name: 'Shreyansh Verma',
+    email: 'shreyansh.verma@university.edu',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
+  },
+  'user-4': {
+    name: 'Aarav Panjeta',
+    email: 'aarav.panjeta@university.edu',
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
+  },
+  'user-5': {
+    name: 'Manu Gupta',
+    email: 'manu.gupta@university.edu',
+    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
+  },
+  'user-6': {
+    name: 'Priya Patel',
+    email: 'priya.patel@university.edu',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
+  },
 };
 
 const sanitizeUser = (u) => {
   if (!u) return u;
-  let updatedName = u.name;
-  let updatedEmail = u.email;
-
-  if (u.id === 'user-1') { updatedName = 'Manansh Goyal'; updatedEmail = 'manansh.goyal@university.edu'; }
-  else if (u.id === 'user-2') { updatedName = 'Himanshu'; updatedEmail = 'himanshu@university.edu'; }
-  else if (u.id === 'user-3') { updatedName = 'Shreyansh'; updatedEmail = 'shreyansh@university.edu'; }
-  else if (u.id === 'user-4') { updatedName = 'Panjeta'; updatedEmail = 'panjeta@university.edu'; }
-  else if (u.id === 'user-5') { updatedName = 'Manu'; updatedEmail = 'manu@university.edu'; }
-
-  const avatar = getAnimalAvatar(u.id);
-  return { ...u, name: updatedName, email: updatedEmail, avatar };
+  if (REAL_USER_PROFILES[u.id]) {
+    return {
+      ...u,
+      name: REAL_USER_PROFILES[u.id].name,
+      email: REAL_USER_PROFILES[u.id].email,
+      avatar: REAL_USER_PROFILES[u.id].avatar,
+    };
+  }
+  // If user has an old cartoon avatar, upgrade to high quality portrait
+  if (!u.avatar || u.avatar.includes('dicebear')) {
+    return {
+      ...u,
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    };
+  }
+  return u;
 };
 
 const sanitizeProjects = (projList) => {
   return projList.map(p => ({
     ...p,
-    members: (p.members || []).map(m => ({
-      ...m,
-      avatar: getAnimalAvatar(m.id)
-    }))
+    members: (p.members || []).map(m => {
+      const realProfile = REAL_USER_PROFILES[m.id];
+      return {
+        ...m,
+        name: realProfile ? realProfile.name : m.name,
+        avatar: realProfile ? realProfile.avatar : (m.avatar && !m.avatar.includes('dicebear') ? m.avatar : 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80')
+      };
+    })
   }));
 };
 
 export const AppProvider = ({ children }) => {
   // Initialize state from localStorage or mock datasets with animal cartoon avatar sanitization
   const [currentUser, setCurrentUser] = useState(() => {
-    const saved = localStorage.getItem('bt_user');
-    const u = saved ? JSON.parse(saved) : initialUsers[0];
-    return sanitizeUser(u);
+    try {
+      const saved = localStorage.getItem('bt_user');
+      if (saved && saved !== 'null' && saved !== 'undefined') {
+        const u = JSON.parse(saved);
+        return u ? sanitizeUser(u) : null;
+      }
+    } catch (err) {
+      console.error('Error loading stored user:', err);
+    }
+    return null; // Guest / Unauthenticated by default for a realistic workflow
   });
 
   const [users, setUsers] = useState(() => {
@@ -72,9 +110,32 @@ export const AppProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : initialNotifications;
   });
 
+  // Auto-upgrade legacy localStorage mock data if older cartoon or incomplete dataset is detected
+  useEffect(() => {
+    try {
+      const storedProjects = localStorage.getItem('bt_projects');
+      if (storedProjects && (storedProjects.includes('dicebear') || storedProjects.includes('PanjetaBoy') || !storedProjects.includes('proj-6'))) {
+        setProjects(initialProjects);
+        setTasks(initialTasks);
+        setNotifications(initialNotifications);
+        setUsers(initialUsers);
+        localStorage.setItem('bt_projects', JSON.stringify(initialProjects));
+        localStorage.setItem('bt_tasks', JSON.stringify(initialTasks));
+        localStorage.setItem('bt_notifications', JSON.stringify(initialNotifications));
+        localStorage.setItem('bt_users', JSON.stringify(initialUsers));
+      }
+    } catch (e) {
+      console.error('Error during data upgrade:', e);
+    }
+  }, []);
+
   // Save to localStorage when state updates
   useEffect(() => {
-    localStorage.setItem('bt_user', JSON.stringify(currentUser));
+    if (currentUser) {
+      localStorage.setItem('bt_user', JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem('bt_user');
+    }
   }, [currentUser]);
 
   useEffect(() => {
@@ -167,13 +228,21 @@ export const AppProvider = ({ children }) => {
       return { success: false, message: 'An account with this email address already exists. Please sign in instead.' };
     }
 
+    const realPortraits = [
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80"
+    ];
+    const assignedAvatar = realPortraits[Math.floor(Math.random() * realPortraits.length)];
+
     const newUser = {
       id: "user-" + Date.now(),
       name: userData.name || "New Student",
       email: cleanEmail,
       phone: userData.phone || "9876543210",
       password: userData.password || "password123",
-      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${Date.now()}&backgroundColor=ffd5dc`,
+      avatar: assignedAvatar,
       course: userData.course || "Computer Science",
       year: userData.year || "2nd Year",
       bio: userData.bio || "Enthusiastic student builder.",
@@ -202,8 +271,8 @@ export const AppProvider = ({ children }) => {
         phone: "9876543210",
         password: "password123",
         avatar: provider === 'google' 
-          ? `https://api.dicebear.com/7.x/open-peeps/svg?seed=GoogleUser&backgroundColor=b6e3f4`
-          : `https://api.dicebear.com/7.x/bottts/svg?seed=GithubUser&backgroundColor=c0aede`,
+          ? 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80'
+          : 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
         course: "Computer Science & Engineering",
         year: "2nd Year",
         bio: `Authenticated via ${provider.toUpperCase()}`,
@@ -248,6 +317,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const updateProfile = (updatedFields) => {
+    if (!currentUser) return;
     const updated = { ...currentUser, ...updatedFields };
     setCurrentUser(updated);
     setUsers(prev => prev.map(u => u.id === currentUser.id ? updated : u));
@@ -255,6 +325,7 @@ export const AppProvider = ({ children }) => {
 
   // Project Actions
   const addProject = (projectData) => {
+    if (!currentUser) return null;
     const newId = "proj-" + Date.now();
     const newProj = {
       id: newId,
@@ -362,7 +433,7 @@ export const AppProvider = ({ children }) => {
   };
 
   // Task Actions
-  const addTask = (projectId, title, priority = "Medium", assignee = currentUser.name) => {
+  const addTask = (projectId, title, priority = "Medium", assignee = (currentUser ? currentUser.name : "Unassigned")) => {
     const newTask = {
       id: "task-" + Date.now(),
       projectId,
