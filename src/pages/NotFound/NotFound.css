@@ -1,0 +1,34 @@
+.not-found-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: var(--spacing-3xl);
+  padding-bottom: var(--spacing-3xl);
+  min-height: calc(100vh - 200px);
+}
+
+.not-found-card {
+  text-align: center;
+  padding: var(--spacing-3xl);
+  max-width: 500px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.not-found-icon {
+  color: var(--color-copper);
+  margin-bottom: var(--spacing-md);
+}
+
+.not-found-card h1 {
+  font-size: 2rem;
+  color: var(--color-deep-evergreen);
+  margin-bottom: var(--spacing-xs);
+}
+
+.not-found-card p {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xl);
+}

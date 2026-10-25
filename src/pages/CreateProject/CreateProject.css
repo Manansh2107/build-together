@@ -1,0 +1,52 @@
+.create-project-page {
+  padding-top: var(--spacing-2xl);
+  padding-bottom: var(--spacing-3xl);
+}
+
+.create-project-card {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--spacing-2xl);
+}
+
+.create-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-2xl);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.create-icon {
+  background-color: var(--color-soft-sage-light);
+  color: var(--color-evergreen);
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.create-project-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-buttons-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+}
+
+@media (max-width: 600px) {
+  .create-header {
+    flex-direction: column;
+  }
+}

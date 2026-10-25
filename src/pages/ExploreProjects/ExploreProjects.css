@@ -1,0 +1,18 @@
+.explore-page {
+  padding-top: var(--spacing-2xl);
+  padding-bottom: var(--spacing-3xl);
+}
+
+.explore-search-wrap {
+  margin-bottom: var(--spacing-md);
+}
+
+.results-count-bar {
+  font-size: 0.88rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.results-count-bar strong {
+  color: var(--color-deep-evergreen);
+}
