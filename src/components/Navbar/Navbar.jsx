@@ -73,7 +73,7 @@ export const Navbar = () => {
                 </Button>
               </Link>
 
-              <Link to="/my-projects?tab=saved" className="notif-btn" title="Saved Projects (Redux Toolkit)">
+              <Link to="/my-projects?tab=saved" className="notif-btn" title="Saved Projects">
                 <Bookmark size={20} />
                 {savedBookmarksCount > 0 && <span className="notif-badge">{savedBookmarksCount}</span>}
               </Link>

@@ -11,12 +11,12 @@ export const SignIn = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // If already logged in, redirect to dashboard
+  // If already logged in, redirect to homepage
   if (currentUser) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
-  const from = location.state?.from?.pathname || '/dashboard';
+  const from = location.state?.from?.pathname || '/';
 
   const [email, setEmail] = useState('manansh.goyal@university.edu');
   const [password, setPassword] = useState('password123');
@@ -55,7 +55,7 @@ export const SignIn = () => {
       const res = loginUser(email, password);
       setIsLoading(false);
       if (res.success) {
-        navigate(from, { replace: true });
+        navigate('/', { replace: true });
       } else {
         setError(res.message || 'Invalid email or password.');
       }
@@ -67,7 +67,7 @@ export const SignIn = () => {
     setTimeout(() => {
       loginWithProvider(provider);
       setIsLoading(false);
-      navigate(from, { replace: true });
+      navigate('/', { replace: true });
     }, 300);
   };
 
@@ -77,7 +77,7 @@ export const SignIn = () => {
     setError('');
     const res = loginUser(demoEmail, 'password123');
     if (res.success) {
-      navigate(from, { replace: true });
+      navigate('/', { replace: true });
     }
   };
 

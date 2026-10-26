@@ -93,7 +93,7 @@ export const ProjectDetails = () => {
             icon={Bookmark}
             onClick={() => dispatch(toggleBookmark(project.id))}
           >
-            {isBookmarked ? "Saved (Redux)" : "Save Project (Redux)"}
+            {isBookmarked ? "Saved" : "Save Project"}
           </Button>
 
           {isMember ? (

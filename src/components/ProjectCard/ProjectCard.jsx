@@ -43,7 +43,7 @@ export const ProjectCard = ({ project }) => {
             type="button"
             className={`card-bookmark-btn ${isBookmarked ? 'active' : ''}`}
             onClick={handleBookmarkClick}
-            title={isBookmarked ? 'Remove from Saved (Redux)' : 'Save Project (Redux)'}
+            title={isBookmarked ? 'Remove from Saved' : 'Save Project'}
             aria-label={isBookmarked ? 'Remove from Saved' : 'Save Project'}
           >
             <Bookmark size={16} fill={isBookmarked ? 'currentColor' : 'none'} />

@@ -51,7 +51,7 @@ export const MyProjects = () => {
         <div>
           <span className="section-subtitle">PROJECT DASHBOARD</span>
           <h1 className="page-title">My Projects</h1>
-          <p className="page-subtitle">Manage projects you created, teams you joined, and saved bookmarks (Redux Toolkit).</p>
+          <p className="page-subtitle">Manage projects you created, teams you joined, and saved bookmarks.</p>
         </div>
 
         <Link to="/create-project">
@@ -117,7 +117,7 @@ export const MyProjects = () => {
               : activeTab === 'joined'
               ? "You haven't joined any classmate projects yet."
               : activeTab === 'saved'
-              ? "You haven't saved any projects yet. Click the bookmark icon on any project card to save it using Redux Toolkit!"
+              ? "You haven't saved any projects yet. Click the bookmark icon on any project card to save it!"
               : "No projects match your current tab selection."}
           </p>
           <Link to={activeTab === 'saved' ? "/explore" : "/create-project"}>

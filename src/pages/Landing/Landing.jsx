@@ -7,7 +7,7 @@ import { ProjectCard } from '../../components/ProjectCard/ProjectCard';
 import './Landing.css';
 
 export const Landing = () => {
-  const { projects } = useContext(AppContext);
+  const { projects, currentUser } = useContext(AppContext);
   const featuredProjects = projects.slice(0, 3);
 
   const journeySteps = [
@@ -39,11 +39,19 @@ export const Landing = () => {
                 Explore Projects
               </Button>
             </Link>
-            <Link to="/sign-up">
-              <Button variant="outline" size="lg" icon={FolderPlus}>
-                Start Building
-              </Button>
-            </Link>
+            {currentUser ? (
+              <Link to="/create-project">
+                <Button variant="outline" size="lg" icon={FolderPlus}>
+                  Create Project
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/sign-up">
+                <Button variant="outline" size="lg" icon={FolderPlus}>
+                  Start Building
+                </Button>
+              </Link>
+            )}
           </div>
 
           <div className="hero-stats">
@@ -163,11 +171,19 @@ export const Landing = () => {
             <h2>Ready to start your next student project?</h2>
             <p>Join fellow students, share your project idea, or apply to join an existing team today.</p>
             <div className="cta-buttons">
-              <Link to="/sign-up">
-                <Button variant="copper" size="lg">
-                  Create Account
-                </Button>
-              </Link>
+              {currentUser ? (
+                <Link to="/create-project">
+                  <Button variant="copper" size="lg" icon={FolderPlus}>
+                    Create Project
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/sign-up">
+                  <Button variant="copper" size="lg">
+                    Create Account
+                  </Button>
+                </Link>
+              )}
               <Link to="/explore">
                 <Button variant="outline" size="lg" className="btn-light-outline">
                   Browse Projects

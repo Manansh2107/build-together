@@ -11,12 +11,12 @@ export const SignUp = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // If already logged in, redirect to dashboard
+  // If already logged in, redirect to homepage
   if (currentUser) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
-  const from = location.state?.from?.pathname || '/dashboard';
+  const from = location.state?.from?.pathname || '/';
 
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
@@ -107,7 +107,7 @@ export const SignUp = () => {
 
     const res = signupUser(payload);
     if (res.success) {
-      navigate(from, { replace: true });
+      navigate('/', { replace: true });
     } else {
       setError(res.message || 'Error creating account.');
       setStep(1);
@@ -116,7 +116,7 @@ export const SignUp = () => {
 
   const handleProviderSignUp = (provider) => {
     loginWithProvider(provider);
-    navigate(from, { replace: true });
+    navigate('/', { replace: true });
   };
 
   return (
